@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SafeRoute</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      html, body {
+        height: 100%;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="floating-panel">
+      <button onclick="toggleHeatmap()">Toggle Heatmap</button>
+      <button onclick="load100()">100</button>
+      <button onclick="load500()">500</button>
+      <button onclick="load1000()">1000</button>
+      <button onclick="togglePolice()">Police Stations</button>
+      <button onclick="toggleLibraries()">Libraries</button>
+      <button style="float: right", onclick="refresh()">Refresh</button>
+    </div>
+    <div id="map"></div>
+    <script src="/Users/RaymondFok/MHacks8/index.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkevAkFm-6rY1ftdGnPKDu3iZYIlY_7NY&libraries=visualization&callback=initMap">
+    </script>
+  </body>
+</html>
