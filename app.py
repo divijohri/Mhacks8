@@ -1,5 +1,6 @@
 import os
 from time import time
+from datetime import datetime, timedelta
 import json
 from flask import Flask, request, url_for, session, redirect, render_template, send_from_directory
 from flask_oauth import OAuth
@@ -44,13 +45,35 @@ def pop_login_session():
     session.pop('logged_in', None)
     session.pop('facebook_token', None)
 
+def facebook_me():
+    return facebook.get('/me?fields=id,name,picture').data
+
+def facebook_me_friends():
+    return facebook.get('/me?fields=friends').data
+
+def facebook_photos(user_ids):
+    combined_photos = []
+    for user in user_ids:
+        user_photos = facebook.get('/' + user + '?fields=id,name,picture').data
+        combined_photos.append(user_photos)
+    return combined_photos
 
 @app.route('/')
 def index():
-    if get_facebook_token() == None:
-        return "<a href='login'>Hello. Log in here.</a>"
-    else:
-        return "<a href='facebook/me'>You're logged in!</a>"
+    logged_in = get_facebook_token() != None
+    return render_template("index.html", logged_in=logged_in)
+
+@app.route('/map')
+def map():
+    return render_template("map.html",
+                facebook_id=session['facebook_id'],
+                facebook_name=session['facebook_name'],
+                facebook_picture=session['facebook_picture'])
+
+@app.route("/logout")
+def logout():
+    pop_login_session()
+    return redirect(url_for('index'))
 
 @app.route("/facebook_login")
 def facebook_login():
@@ -71,25 +94,45 @@ def facebook_authorized(resp):
     session['facebook_name'] = current_user_data["name"]
     session['facebook_picture'] = current_user_data["picture"]
 
-    query = "INSERT INTO Buddies (id, lat, long, time) VALUES (%s, %s, %s, %s)"
-    values = (session['facebook_id'], 0, 0, 0)
+    if common.fetch_one("SELECT id FROM Buddies WHERE id = %s", (session['facebook_id'])) == None:
+        query = "INSERT INTO Buddies (id, name, picture, lat, long, time) VALUES (%s, %s, %s, %s, %s, %s)"
+        values = (session['facebook_id'], session['facebook_name'], session['facebook_picture'], 0, 0, 0)
+        common.commit(query, values)
 
-    common.commit(query, values)
+    return redirect('map')
 
-    return redirect(next_url)
+@app.route("/update_location", methods=['POST'])
+def update_location():
+    user_id = session["facebook_id"]
+    lat = request.form.get("lat")
+    long = request.form.get("long")
+    current_time = datetime.now()
 
-def facebook_me():
-    return facebook.get('/me?fields=id,name,picture').data
+    query = """
+        UPDATE Buddies
+        SET lat = %s, long = %s, time = %s
+        WHERE id = %s
+        """
+    values = (lat, long, current_time, user_id)
+    try:
+        common.commit(query, values)
+        return json.dumps({"success": 1})
+    except Exception, e:
+        print "ERROR IN COMMITTING:", e
+        return json.dumps({"success": 0})
 
-def facebook_me_friends():
-    return facebook.get('/me?fields=friends&debug=true').data
-
-def facebook_photos(user_ids):
-    combined_photos = []
-    for user in user_ids:
-        user_photos = facebook.get('/' + user + '?fields=id,name,picture').data
-        combined_photos.append(user_photos)
-    return combined_photos
+@app.route("/get_friends")
+def get_friends():
+    friends_data = facebook_me_friends()["friends"]["data"]
+    friends_ids = set([f["id"] for f in friends_data])
+    time_range = datetime.now() - timedelta(hours=2)
+    query = """
+        SELECT * FROM Buddies WHERE time > %s
+        """
+    values = (time_range)
+    people = common.fetch_all(query, values)
+    friends = filter(lambda x: x in friend_ids, people)
+    return json.dumps(friends)
 
 @app.route("/facebook/me")
 def _facebook_me():
@@ -103,14 +146,5 @@ def _facebook_me_friends():
 def _facebook_photos():
     user_ids = request.args.get('user_ids').split(',')
     return json.dumps(facebook_photos(user_ids))
-
-@app.route("/logout")
-def logout():
-    pop_login_session()
-    return redirect(url_for('index'))
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    return render_template('login.html')
 
 print(app.url_map)
