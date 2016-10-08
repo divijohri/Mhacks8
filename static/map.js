@@ -7,19 +7,54 @@ var startend = [];
 var fb_id;
 var fb_img;
 var fb_name; 
+var globlat, globlng
 
     function initMap() {
+
       var myLatLng = {lat: 42.3591, lng: -83.0665};
 
       directionsService = new google.maps.DirectionsService;
       directionsDisplay = new google.maps.DirectionsRenderer;
 
-      // Creates map
+
       map = new google.maps.Map(document.getElementById('map'), {
         zoom: 12,
         center: myLatLng,
         mapTypeId: google.maps.MapTypeId.HYBRID
       });
+
+      
+      
+
+       var infoWindow = new google.maps.InfoWindow({map: map});
+
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              globlat: position.coords.latitude,
+              globlng: position.coords.longitude
+            };
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+      }
+
+
+
 
 
       directionsDisplay.setMap(map);
@@ -39,7 +74,7 @@ var fb_name;
         var marker = new google.maps.Marker({
           position: position,
           map: map,
-          icon: '/static/blue_MarkerP.png',
+          icon: '../static/blue_MarkerP.png',
           visible: false
         }); 
         policeStations.push(marker);
@@ -51,7 +86,7 @@ var fb_name;
         var marker = new google.maps.Marker({
           position: position,
           map: map,
-          icon: '/static/pink_MarkerL.png',
+          icon: '../static/pink_MarkerL.png',
           visible: false
         }); 
         libraries.push(marker);
@@ -200,39 +235,53 @@ var fb_name;
         alert("couldn't get directions:" + status);
       }
     });
+  }
 
 
 
 
 
   // DROPS FACEBOOK IMAGE ONTO MAP
-  function dropBuddyPin(pos, lat, lng) {
+
+  // Other buddies' markers
+  function dropBuddyPin(lat, lng, img) {
     position = new google.maps.LatLng(lat, lng);
     var marker = new google.maps.Marker({
       position: pos,
-      map: map
+      map: map,
+      icon: img
     });
   }
 
 
-
-
   function findBuddies() {
-    position = new google.maps.LatLng();
+    // My own marker
+    position = new google.maps.LatLng(globlat, globlng);
     var marker = new google.maps.Marker({
         position: position,
         map: map,
-        icon: img
+        icon: fb_img
     }); 
 
     // Receive buddy data [GET id, lat, lng, time, name, picture]
     $.get("/get_friends", function(data) {
-      
+      for (var i = 0; i < data.length; ++i) {
+          var lat = data[i].lat;
+          var lng = data[i].lng;
+          var name = data[i].name;
+          var pic = data[i].picture;
+          dropBuddyPin(lat, lng, pic);
+      }
     });
-
+  }
     // Every 10 seconds, updates user location. [POST {id, lat, lng]
+  function update_loc() {
+    $.post("/update_location", {fb_id, globlat, globlng});
+  }
+  
+  setInterval(update_loc,10000); 
+
+  function stop_update_loc() {
+    clearInterval();
   }
 
-
-
-}
