@@ -2,6 +2,7 @@ import os
 from time import time
 from datetime import datetime, timedelta
 import json
+from functools import wraps
 from flask import Flask, request, url_for, session, redirect, render_template, send_from_directory
 from flask_oauth import OAuth
 from werkzeug.contrib.fixers import ProxyFix
@@ -37,6 +38,17 @@ facebook = oauth.remote_app('facebook',
     request_token_params={'scope': ('email, user_friends')}
 )
 
+def check_logged_in(target):
+    def wrap(func):
+        @wraps(func)
+        def inner(*args, **kwargs):
+            if not session.has_key('facebook_token'):
+                return redirect(url_for(target))
+            else:
+                return func(*args, **kwargs)
+        return inner
+    return wrap
+
 @facebook.tokengetter
 def get_facebook_token():
     return session.get('facebook_token')
@@ -44,6 +56,9 @@ def get_facebook_token():
 def pop_login_session():
     session.pop('logged_in', None)
     session.pop('facebook_token', None)
+    session.pop('facebook_id', None)
+    session.pop('facebook_name', None)
+    session.pop('facebook_picture', None)
 
 def facebook_me():
     return facebook.get('/me?fields=id,name,picture').data
@@ -64,6 +79,7 @@ def index():
     return render_template("index.html", logged_in=logged_in)
 
 @app.route('/map')
+@check_logged_in('index')
 def map():
     return render_template("map.html",
                 facebook_id=session['facebook_id'],
@@ -71,6 +87,7 @@ def map():
                 facebook_picture=session['facebook_picture'])
 
 @app.route("/logout")
+@check_logged_in('index')
 def logout():
     pop_login_session()
     return redirect(url_for('index'))
@@ -92,7 +109,7 @@ def facebook_authorized(resp):
     current_user_data = facebook_me()
     session['facebook_id'] = current_user_data["id"]
     session['facebook_name'] = current_user_data["name"]
-    session['facebook_picture'] = current_user_data["picture"]
+    session['facebook_picture'] = current_user_data["picture"]["data"]["url"]
 
     if common.fetch_one("SELECT id FROM Buddies WHERE id = %s", (session['facebook_id'])) == None:
         query = "INSERT INTO Buddies (id, name, picture, lat, long, time) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -102,6 +119,7 @@ def facebook_authorized(resp):
     return redirect('map')
 
 @app.route("/update_location", methods=['POST'])
+@check_logged_in('index')
 def update_location():
     user_id = session["facebook_id"]
     lat = request.form.get("lat")
@@ -123,6 +141,7 @@ def update_location():
         return json.dumps({"success": 0})
 
 @app.route("/get_friends")
+@check_logged_in('index')
 def get_friends():
     friends_data = facebook_me_friends()["friends"]["data"]
     friends_ids = set([f["id"] for f in friends_data])
