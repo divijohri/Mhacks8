@@ -10,7 +10,8 @@ def get_conn():
             server=server,
             user=username,
             password=password,
-            database=database)
+            database=database,
+            as_dict=True)
     return conn
 
 def close_conn(conn):

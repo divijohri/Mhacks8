@@ -44,6 +44,7 @@ def pop_login_session():
     session.pop('logged_in', None)
     session.pop('facebook_token', None)
 
+
 @app.route('/')
 def index():
     if get_facebook_token() == None:
@@ -65,29 +66,43 @@ def facebook_authorized(resp):
 
     session['logged_in'] = True
     session['facebook_token'] = (resp['access_token'], '')
+    current_user_data = facebook_me()
+    session['facebook_id'] = current_user_data["id"]
+    session['facebook_name'] = current_user_data["name"]
+    session['facebook_picture'] = current_user_data["picture"]
 
-    #query = "INSERT INTO
+    query = "INSERT INTO Buddies (id, lat, long, time) VALUES (%s, %s, %s, %s)"
+    values = (session['facebook_id'], 0, 0, 0)
+
+    common.commit(query, values)
 
     return redirect(next_url)
 
-@app.route("/facebook/me")
 def facebook_me():
-    data = facebook.get('/me?fields=id,name,picture').data
-    return json.dumps(data)
+    return facebook.get('/me?fields=id,name,picture').data
 
-@app.route("/facebook/me/friends")
 def facebook_me_friends():
-    data = facebook.get('/me?fields=friends&debug=true').data
-    return json.dumps(data)
+    return facebook.get('/me?fields=friends&debug=true').data
 
-@app.route("/facebook/photos")
-def facebook_photos():
-    user_ids = request.args.get('user_ids').split(',')
-    combined_photos = {}
+def facebook_photos(user_ids):
+    combined_photos = []
     for user in user_ids:
         user_photos = facebook.get('/' + user + '?fields=id,name,picture').data
-        combined_photos.update(user_photos)
-    return json.dumps(combined_photos)
+        combined_photos.append(user_photos)
+    return combined_photos
+
+@app.route("/facebook/me")
+def _facebook_me():
+    return json.dumps(facebook_me())
+
+@app.route("/facebook/me/friends")
+def _facebook_me_friends():
+    return json.dumps(facebook_me_friends())
+
+@app.route("/facebook/photos")
+def _facebook_photos():
+    user_ids = request.args.get('user_ids').split(',')
+    return json.dumps(facebook_photos(user_ids))
 
 @app.route("/logout")
 def logout():
