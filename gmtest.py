@@ -4,9 +4,7 @@ parsedList = []
 with open("testData.txt", "r") as dataFile:
     encodedData = dataFile.readlines()
     for line in encodedData:
-        print(line)
         parsedList.append(re.findall('\"}", "(.*?)", "(.*?)"', line))
-print(parsedList)
 #REQUESTING GOOGLE FOR ADDRESS TO LAT LONG
 #import requests
 #longitudes = []
@@ -22,8 +20,15 @@ print(parsedList)
 #    latitudes.append(x_geo['lat'])
 #    print(x_geo['lng'], x_geo['lat'])
 #WRITING PARSED DATA TO FILE
+finalList = []
 with open("data.txt", "w") as parsedData:
     for aLine in parsedList:
-        parsedData.write(str(aLine))
-        parsedData.write("\n")
-
+        aLine = re.sub('\'', '', str(aLine))
+        aLine = re.sub('\[', '', str(aLine))
+        aLine = re.sub('\]', '', str(aLine))
+        aLine = re.sub('\(', '[', str(aLine))
+        aLine = re.sub('\)', ']', str(aLine))
+        finalList.append(aLine)
+    done = str(finalList)
+    done = re.sub('\'', '', done)
+    parsedData.write(done)
