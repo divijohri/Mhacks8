@@ -1,10 +1,11 @@
 import os
+from time import time
 import json
 from flask import Flask, request, url_for, session, redirect, render_template, send_from_directory
 from flask_oauth import OAuth
 from werkzeug.contrib.fixers import ProxyFix
 #import gevent.monkey
-from time import time
+import common
 
 app = Flask(__name__,
         static_folder="static",
@@ -32,7 +33,7 @@ facebook = oauth.remote_app('facebook',
     authorize_url='https://www.facebook.com/dialog/oauth',
     consumer_key=FACEBOOK_APP_ID,
     consumer_secret=FACEBOOK_APP_SECRET,
-    request_token_params={'scope': ('email, ')}
+    request_token_params={'scope': ('email, user_friends')}
 )
 
 @facebook.tokengetter
@@ -65,6 +66,8 @@ def facebook_authorized(resp):
     session['logged_in'] = True
     session['facebook_token'] = (resp['access_token'], '')
 
+    #query = "INSERT INTO
+
     return redirect(next_url)
 
 @app.route("/facebook/me")
@@ -74,7 +77,7 @@ def facebook_me():
 
 @app.route("/facebook/me/friends")
 def facebook_me_friends():
-    data = facebook.get('/me?fields=friends').data
+    data = facebook.get('/me?fields=friends&debug=true').data
     return json.dumps(data)
 
 @app.route("/facebook/photos")
@@ -94,6 +97,5 @@ def logout():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     return render_template('login.html')
-
 
 print(app.url_map)
