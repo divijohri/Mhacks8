@@ -3,6 +3,10 @@ var start, end
 var directionsService, directionsDisplay
 var policeStations = [];
 var libraries = [];
+var startend = [];
+var fb_id;
+var fb_img;
+var fb_name; 
 
     function initMap() {
       var myLatLng = {lat: 42.3591, lng: -83.0665};
@@ -35,7 +39,7 @@ var libraries = [];
         var marker = new google.maps.Marker({
           position: position,
           map: map,
-          icon: 'blue_MarkerP.png',
+          icon: '/static/blue_MarkerP.png',
           visible: false
         }); 
         policeStations.push(marker);
@@ -47,7 +51,7 @@ var libraries = [];
         var marker = new google.maps.Marker({
           position: position,
           map: map,
-          icon: 'pink_MarkerL.png',
+          icon: '/static/pink_MarkerL.png',
           visible: false
         }); 
         libraries.push(marker);
@@ -58,18 +62,24 @@ var libraries = [];
       var markerCount = 0;
       google.maps.event.addListener(map, 'rightclick', function(e) {
         if (markerCount != 2) {
-          if (markerCount == 1) {
-            placeMarker(e.latLng, map);
+          if (markerCount == 0) {
+            startmarker = new google.maps.Marker({
+              position: e.latLng,
+              map: map
+            });
+            startend.push(startmarker);
             start = e.latLng;
             ++markerCount;
           } else {
-            placeMarker(e.latLng, map);
-            ++markerCount;
+            endmarker = new google.maps.Marker({
+              position: e.latLng,
+              map: map
+            });
+            startend.push(endmarker);
             end = e.latLng;
+            ++markerCount;
+            findRoute();
           }
-        }
-        else {
-          findRoute();
         }
       });
 
@@ -155,16 +165,74 @@ var libraries = [];
     var request = {
       origin: start,
       destination: end,
+      provideRouteAlternatives: true,
       travelMode: google.maps.TravelMode.WALKING
     };
     directionsService.route(request, function(result, status) {
-      console.log(status);
       if (status == 'OK') {
-        console.log(result);
+        var routes = result.routes;
         directionsDisplay.setDirections(result);
+          var directionsRenderer1 = new google.maps.DirectionsRenderer({
+            directions: result,
+            routeIndex: 0,
+            map: map,
+            polylineOptions: {
+              strokeColor: "green"
+            }
+          });
+          var directionsRenderer2 = new google.maps.DirectionsRenderer({
+            directions: result,
+            routeIndex: 1,
+            map: map,
+            polylineOptions: {
+              strokeColor: "blue"
+            }
+          });
+          var directionsRenderer3 = new google.maps.DirectionsRenderer({
+            directions: result,
+            routeIndex: 2,
+            map: map,
+            polylineOptions: {
+              strokeColor: "red"
+            }
+          });
       } else {
         alert("couldn't get directions:" + status);
       }
     });
+
+
+
+
+
+  // DROPS FACEBOOK IMAGE ONTO MAP
+  function dropBuddyPin(pos, lat, lng) {
+    position = new google.maps.LatLng(lat, lng);
+    var marker = new google.maps.Marker({
+      position: pos,
+      map: map
+    });
+  }
+
+
+
+
+  function findBuddies() {
+    position = new google.maps.LatLng();
+    var marker = new google.maps.Marker({
+        position: position,
+        map: map,
+        icon: img
+    }); 
+
+    // Receive buddy data [GET id, lat, lng, time, name, picture]
+    $.get("/get_friends", function(data) {
+      
+    });
+
+    // Every 10 seconds, updates user location. [POST {id, lat, lng]
+  }
+
+
 
 }
