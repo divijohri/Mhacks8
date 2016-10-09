@@ -1,38 +1,71 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>SafeRoute</title>
-    <meta name="viewport" content="initial-scale=1.0">
-    <meta charset="utf-8">
-    <style>
-      html, body {
-        height: 100%;
-      }
-      #map {
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="floating-panel">
-      <button onclick="toggleHeatmap()">Toggle Heatmap</button>
-      <button onclick="load100()">100</button>
-      <button onclick="load500()">500</button>
-      <button onclick="load1000()">1000</button>
-      <button onclick="togglePolice()">Police Stations</button>
-      <button onclick="toggleLibraries()">Libraries</button>
-      <button style="float: right", onclick="stop()">Stop Finding Buddies</button>
-      <button style="float: right", onclick="findBuddies()">Find Buddies</button>
-      <button style="float: right", onclick="refresh()">Refresh</button>
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/static/bootstrap-material-design.min.css">
+<style>
+@media screen and (min-width: 768px) {
+    #floating-panel {
+        position: absolute;
+        background-color: white;
+        left: 0;
+        bottom: 0;
+        width: 300px;
+        height: 200px;
+        padding: 15px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div id="floating-panel">
+    <div class="togglebutton">
+        <label>Crime Heatmap&nbsp;&nbsp;&nbsp;
+            <input type="checkbox" checked="" onclick="toggleHeatmap()">
+        </label>
     </div>
-    <div id="map"></div>
-        <script>
-            fb_id = "{{ facebook_id }}";
-            fb_name = "{{ facebook_name }}";
-            fb_img = "{{ facebook_picture | safe }}";
-        </script>
-        <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-        <script src="../static/map.js"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkevAkFm-6rY1ftdGnPKDu3iZYIlY_7NY&libraries=visualization&callback=initMap"></script>
-  </body>
-</html>
+    <div class="radio-inline">
+        <label>
+            <input type="radio" name="time-frame" value="day" checked> Day
+        </label>
+    </div>
+    <div class="radio-inline">
+        <label>
+            <input type="radio" name="time-frame" value="week"> Week
+        </label>
+    </div>
+    <div class="radio-inline">
+        <label>
+            <input type="radio" name="time-frame" value="month"> Month
+        </label>
+    </div>
+
+    <hr>
+
+    <div class="togglebutton">
+        <label>Police Stations&nbsp;&nbsp;&nbsp;
+            <input type="checkbox" checked="" onclick="togglePolice()">
+        </label>
+    </div>
+    <div class="togglebutton">
+        <label>Libraries&nbsp;&nbsp;&nbsp;
+            <input type="checkbox" checked="" onclick="toggleLibraries()">
+        </label>
+    </div>
+    <div class="togglebutton">
+        <label>Schools&nbsp;&nbsp;&nbsp;
+            <input type="checkbox" checked="" onclick="toggleSchools()">
+        </label>
+    </div>
+</div>
+<div id="map"></div>
+<script src="/static/material.min.js"></script>
+<script>$.material.init()</script>
+<script>
+    fb_id = "{{ facebook_id }}";
+    fb_name = "{{ facebook_name }}";
+    fb_img = "{{ facebook_picture | safe }}";
+</script>
+<script src="/static/map.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkevAkFm-6rY1ftdGnPKDu3iZYIlY_7NY&libraries=visualization&callback=initMap"></script>
+{% endblock %}

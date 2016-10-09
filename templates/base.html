@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Detroit Buddy App</title>
+        <meta charset="utf-8">
+        <title>Augry</title>
+        <meta name="description" content="View predictions of crime and danger in the form of heat maps, formed from real time information of incidents in Detroit. Plot multiple routes going through those regions and judge the safety of the journey, making your own choice of either the fastest or safest path. Find Facebook friends around you when you're in a dangerous area, and buddy up with them to chat, meet and get to your destination safely.">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css">
+        {% block head %}{% endblock %}
     </head>
     <body>
+        <script src="/static/jquery.min.js"></script>
+        <script src="/static/bootstrap.min.js"></script>
         {% block body %}{% endblock %}
     </body>
 </html>
