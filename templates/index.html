@@ -76,6 +76,7 @@
             <div class="visible-xs" style="padding: 10px;">
                 {% if logged_in %}
                 <a class="btn btn-primary btn-block" href="/map">You're logged in! Enter Augry</a>
+                <a class="btn btn-block" href="/logout">Logout</a>
                 {% else %}
                 <a class="btn btn-primary btn-block" href="/facebook_login">Login with Facebook</a>
                 {% endif %}
@@ -83,6 +84,7 @@
             <div class="visible-sm visible-md visible-lg pull-right" style="margin-top: 10px;">
                 {% if logged_in %}
                 <a class="btn btn-primary" href="/map">You're logged in! Enter Augry</a>
+                <a class="btn" href="/logout" style="margin-right: 5px;">Logout</a>
                 {% else %}
                 <a class="btn btn-primary" href="/facebook_login">Login with Facebook</a>
                 {% endif %}
