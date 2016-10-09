@@ -145,7 +145,7 @@ def update_location():
 @check_logged_in('index')
 def get_friends():
     friends_data = facebook_me_friends()["friends"]["data"]
-    friends_ids = set([f["id"] for f in friends_data])
+    friend_ids = set([f["id"] for f in friends_data])
     time_range = datetime.now() - timedelta(hours=2)
     query = """
         SELECT * FROM Buddies WHERE time > %s
