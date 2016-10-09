@@ -273,7 +273,9 @@ function findBuddies() {
 }
 // Every 10 seconds, updates user location. [POST {id, lat, lng]
 function update_loc() {
+  if (currentLat && currentLong) {
     $.post("/update_location", {"lat": currentLat, "long": currentLong});
+  }
 }
 
 setInterval(update_loc,10000);
