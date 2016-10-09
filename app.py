@@ -112,7 +112,7 @@ def facebook_authorized(resp):
     session['facebook_picture'] = current_user_data["picture"]["data"]["url"]
 
     if common.fetch_one("SELECT id FROM Buddies WHERE id = %s", (session['facebook_id'])) == None:
-        query = "INSERT INTO Buddies (id, name, picture, lat, long, time) VALUES (%s, %s, %s, %s, %s, %s)"
+        query = "INSERT INTO Buddies (id, name, picture, lat, lng, time) VALUES (%s, %s, %s, %s, %s, %s)"
         values = (session['facebook_id'], session['facebook_name'], session['facebook_picture'], 0, 0, 0)
         common.commit(query, values)
 
@@ -122,18 +122,18 @@ def facebook_authorized(resp):
 @check_logged_in('index')
 def update_location():
     lat = request.form.get("lat")
-    long = request.form.get("long")
-    if lat == None or long == None:
+    lng = request.form.get("lng")
+    if lat == None or lng == None:
         return json.dumps({"success": 0})
     user_id = session["facebook_id"]
     current_time = datetime.now()
 
     query = """
         UPDATE Buddies
-        SET lat = %s, long = %s, time = %s
+        SET lat = %s, lng = %s, time = %s
         WHERE id = %s
         """
-    values = (lat, long, current_time, user_id)
+    values = (lat, lng, current_time, user_id)
     try:
         common.commit(query, values)
         return json.dumps({"success": 1})
