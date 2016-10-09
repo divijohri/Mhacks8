@@ -6,7 +6,7 @@ var libraries = [];
 var startend = [];
 var fb_id;
 var fb_img;
-var fb_name; 
+var fb_name 
 var currentLat, currentLong
 
     function initMap() {
@@ -24,7 +24,7 @@ var currentLat, currentLong
       });
 
       
-      
+      /*
 
        var infoWindow = new google.maps.InfoWindow({map: map});
 
@@ -36,8 +36,8 @@ var currentLat, currentLong
               globlng: position.coords.longitude
             };
 
-            currentLat = pos.globlat
-            currentLong = pos.globlng   
+            currentLat = pos.globlat;
+            currentLong = pos.globlng;   
 
             infoWindow.setPosition(pos);
             infoWindow.setContent('Location found.');
@@ -57,8 +57,7 @@ var currentLat, currentLong
       }
 
 
-
-
+*/
 
       directionsDisplay.setMap(map);
       
