@@ -29,12 +29,12 @@ function initMap() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             var pos = {
-                globlat: position.coords.latitude,
-                globlng: position.coords.longitude
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
             };
 
-            currentLat = pos.globlat;
-            currentLong = pos.globlng;
+            currentLat = pos.lat;
+            currentLong = pos.lng;
 
             infoWindow.setPosition(pos);
             infoWindow.setContent('Location found.');
