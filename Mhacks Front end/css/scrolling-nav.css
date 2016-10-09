@@ -55,8 +55,7 @@ of those sections to manage the look and feel of the site. */
 
 .contact-section {
     height: 100%;
-    padding-top: 60px;
-    height: 110%;
+    padding-top: 80px;
     text-align: center;
     background: #eee;
 }
