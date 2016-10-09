@@ -4,9 +4,6 @@ var directionsService, directionsDisplay;
 var policeStations = [];
 var libraries = [];
 var startend = [];
-var fb_id;
-var fb_img;
-var fb_name;
 var currentLat, currentLong;
 
 function initMap() {
@@ -234,12 +231,6 @@ function findRoute() {
     });
 }
 
-
-
-
-
-// DROPS FACEBOOK IMAGE ONTO MAP
-
 // Other buddies' markers
 function dropBuddyPin(lat, lng, img) {
     position = new google.maps.LatLng(lat, lng);
@@ -250,15 +241,14 @@ function dropBuddyPin(lat, lng, img) {
     });
 }
 
-
 function findBuddies() {
     // My own marker
-    position = new google.maps.LatLng(globlat, globlng);
+    position = new google.maps.LatLng(currentLat, currentLong);
     var marker = new google.maps.Marker({
         position: position,
         map: map,
         icon: fb_img
-    }); 
+    });
 
     // Receive buddy data [GET id, lat, lng, time, name, picture]
     $.get("/get_friends", function(data) {
