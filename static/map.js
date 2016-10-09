@@ -42,9 +42,9 @@ function initMap() {
         var marker = new google.maps.Marker({
             position: position,
             map: map,
-            icon: '../static/blue_MarkerP.png',
+            icon: '/static/blue_MarkerP.png',
             visible: false
-        }); 
+        });
         policeStations.push(marker);
     }
 
@@ -54,7 +54,7 @@ function initMap() {
         var marker = new google.maps.Marker({
             position: position,
             map: map,
-            icon: '../static/pink_MarkerL.png',
+            icon: '/static/pink_MarkerL.png',
             visible: false
         });
         libraries.push(marker);
@@ -66,9 +66,9 @@ function initMap() {
         var marker = new google.maps.Marker({
             position: position,
             map: map,
-            icon: '../static/yellow_MarkerS.png',
+            icon: '/static/yellow_MarkerS.png',
             visible: false
-        }); 
+        });
         schools.push(marker);
     }
 
