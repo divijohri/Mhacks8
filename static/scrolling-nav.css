@@ -33,9 +33,10 @@ of those sections to manage the look and feel of the site. */
 
 .intro-section {
     height: 105%;
-    padding-top: 130px;
+    padding-top: 150px;
     text-align: center;
     background: #fff;
+    overflow: hidden;
 }
 
 .about-section {
@@ -44,13 +45,15 @@ of those sections to manage the look and feel of the site. */
     text-align: center;
     background-image: url("pictures/background.png");
     background-size: cover;
+    overflow: hidden;
 }
 
 .team-section {
-    padding: 90px 0;
+    padding-top: 90px;
     height: 110%;
     text-align: center;
     background: #fff;
+    overflow: hidden;
 }
 
 .contact-section {
@@ -58,4 +61,88 @@ of those sections to manage the look and feel of the site. */
     padding-top: 80px;
     text-align: center;
     background: #eee;
+    overflow: hidden;
+}
+
+.space {
+    line-height: 150%;
+    font-weight: 300;
+    font-size: 30px;
+}
+
+.bio {
+    font-weight: 300;
+    font-size: 25px;
+}
+
+.bio-image {
+    width: 200px;
+    height: 200px;
+}
+
+@media screen and (max-width: 991px) {
+    .intro-section {
+        padding-top: 90px;
+    }
+
+    .about-section {
+        padding-top: 60px;
+    }
+
+    .team-section {
+        padding-top: 60px;
+    }
+
+    .contact-section {
+        padding-top: 60px;
+    }
+
+    .space {
+        line-height: 130%;
+        font-size: 24px;
+        text-overflow: ellipsis;
+    }
+
+    .bio {
+        font-size: 22px;
+    }
+
+    .bio-image {
+        width: 150px;
+        height: 150px;
+    }
+
+}
+
+@media screen and (max-width: 767px) {
+    .intro-section {
+        padding-top: 60px;
+    }
+
+    .about-section {
+        padding-top: 40px;
+    }
+
+    .team-section {
+        padding-top: 40px;
+    }
+
+    .contact-section {
+        padding-top: 40px;
+    }
+
+    .space {
+        line-height: 120%;
+        font-size: 20px;
+        text-overflow: ellipsis;
+    }
+
+    .bio {
+        font-size: 18px;
+    }
+
+    .bio-image {
+        width: 120px;
+        height: 120px;
+    }
 }
