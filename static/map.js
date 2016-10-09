@@ -148,13 +148,6 @@ function toggleHeatmap() {
     heatmap.setMap(heatmap.getMap() ? null : map);
 }
 
-function placeMarker(position, map) {
-    var marker = new google.maps.Marker({
-        position: position,
-        map: map
-    });
-}
-
 function togglePolice() {
     for (var i = 0; i < policeStations.length; ++i) {
         if (!policeStations[i].visible) {
@@ -240,7 +233,7 @@ function geoLocate() {
                 if (myMarker) {
                     myMarker.setMap(null);
                 }
-                myMarker = dropPin(currentLat, currentLng, fb_img);
+                myMarker = dropPin(currentLat, currentLng, fb_id, fb_name, fb_img);
             }
         }, function() {
             handleLocationError(true);
@@ -257,12 +250,16 @@ function geoLocate() {
     }
 }
 
-function dropPin(lat, lng, img) {
+function dropPin(lat, lng, id, name, img) {
     position = new google.maps.LatLng(lat, lng);
     var marker = new google.maps.Marker({
         position: position,
         map: map,
-        icon: img
+        icon: img,
+        title: name
+    });
+    google.maps.event.addListener(marker, 'click', function(event) {
+        window.open("https://www.facebook.com/" + id, '_blank');
     });
     return marker;
 }
@@ -277,9 +274,10 @@ function findBuddies() {
         for (var i = 0; i < data.length; ++i) {
             var lat = data[i].lat;
             var lng = data[i].lng;
+            var id = data[i].id;
             var name = data[i].name;
             var pic = data[i].picture;
-            buddyMarkers.push(dropPin(lat, lng, pic));
+            buddyMarkers.push(dropPin(lat, lng, id, name, pic));
         }
     });
 }
