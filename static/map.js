@@ -20,36 +20,7 @@ function initMap() {
         mapTypeId: google.maps.MapTypeId.HYBRID
     });
 
-    var infoWindow = new google.maps.InfoWindow({map: map});
-
-    // Try HTML5 geolocation.
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var pos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
-
-            currentLat = pos.lat;
-            currentLong = pos.lng;
-
-            infoWindow.setPosition(pos);
-            infoWindow.setContent('Location found.');
-        }, function() {
-            handleLocationError(true, infoWindow, map.getCenter());
-        });
-    } else {
-        // Browser doesn't support Geolocation
-        handleLocationError(false, infoWindow, map.getCenter());
-    }
-
-    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-        infoWindow.setPosition(pos);
-        infoWindow.setContent(browserHasGeolocation ?
-                              'Error: The Geolocation service failed.' :
-                                  'Error: Your browser doesn\'t support geolocation.');
-    }
-
+    geoLocate();
 
     directionsDisplay.setMap(map);
 
@@ -230,6 +201,52 @@ function findRoute() {
         }
     });
 }
+  function geoLocate() {
+    var infoWindow = new google.maps.InfoWindow({map: map});
+
+    // Try HTML5 geolocation.
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+
+            currentLat = pos.lat;
+            currentLong = pos.lng;
+
+              if (currentLat && currentLong) {
+                $.post("/update_location", {"lat": currentLat, "long": currentLong});
+              }
+
+                  // My own marker
+              position = new google.maps.LatLng(currentLat, currentLong);
+              var marker = new google.maps.Marker({
+                  position: position,
+                  map: map,
+                  icon: fb_img
+              });
+
+
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+        }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+        });
+    } else {
+        // Browser doesn't support Geolocation
+        handleLocationError(false, infoWindow, map.getCenter());
+    }
+
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                                  'Error: Your browser doesn\'t support geolocation.');
+    }
+  }
+
+
 
 // Other buddies' markers
 function dropBuddyPin(lat, lng, img) {
@@ -242,13 +259,6 @@ function dropBuddyPin(lat, lng, img) {
 }
 
 function findBuddies() {
-    // My own marker
-    position = new google.maps.LatLng(currentLat, currentLong);
-    var marker = new google.maps.Marker({
-        position: position,
-        map: map,
-        icon: fb_img
-    });
 
     // Receive buddy data [GET id, lat, lng, time, name, picture]
     $.get("/get_friends", function(data) {
@@ -263,9 +273,8 @@ function findBuddies() {
 }
 // Every 10 seconds, updates user location. [POST {id, lat, lng]
 function update_loc() {
-  if (currentLat && currentLong) {
-    $.post("/update_location", {"lat": currentLat, "long": currentLong});
-  }
+  geoLocate();
+  findBuddies();
 }
 
 setInterval(update_loc,10000);
