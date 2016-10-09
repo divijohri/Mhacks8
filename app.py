@@ -144,19 +144,23 @@ def update_location():
 @app.route("/get_friends")
 @check_logged_in('index')
 def get_friends():
-    friends_data = facebook_me_friends()["friends"]["data"]
-    friend_ids = set([int(f["id"]) for f in friends_data])
-    time_range = datetime.now() - timedelta(minutes=30)
-    query = """
-        SELECT * FROM Buddies WHERE time > %s
-        """
-    values = (time_range)
-    people = common.fetch_all(query, values)
-    current_time = datetime.now()
-    friends = filter(lambda x: x["id"] in friend_ids, people)
-    for friend in friends:
-        friend["time"] = (current_time - friend["time"]).seconds
-    return json.dumps(friends)
+    fb_friends = facebook_me_friends()
+    if fb_friends:
+        friends_data = fb_friends["friends"]["data"]
+        friend_ids = set([int(f["id"]) for f in friends_data])
+        time_range = datetime.now() - timedelta(minutes=30)
+        query = """
+            SELECT * FROM Buddies WHERE time > %s
+            """
+        values = (time_range)
+        people = common.fetch_all(query, values)
+        current_time = datetime.now()
+        friends = filter(lambda x: x["id"] in friend_ids, people)
+        for friend in friends:
+            friend["time"] = (current_time - friend["time"]).seconds
+        return json.dumps(friends)
+    else:
+        return {}
 
 @app.route("/facebook/me")
 def _facebook_me():
