@@ -121,10 +121,11 @@ def facebook_authorized(resp):
 @app.route("/update_location", methods=['POST'])
 @check_logged_in('index')
 def update_location():
-    user_id = session["facebook_id"]
     lat = request.form.get("lat")
     long = request.form.get("long")
-    print lat, long
+    if lat == None or long == None:
+        return json.dumps({"success": 0})
+    user_id = session["facebook_id"]
     current_time = datetime.now()
 
     query = """
