@@ -1,6 +1,7 @@
 var map, heatmap;
 var start, end;
 var directionsService, directionsDisplay;
+var directionRoutes = [];
 var policeStations = [];
 var libraries = [];
 var schools = [];
@@ -75,25 +76,38 @@ function initMap() {
     // Adds markers on click (up to 2)
     var markerCount = 0;
     google.maps.event.addListener(map, 'rightclick', function(e) {
-        if (markerCount != 2) {
-            if (markerCount == 0) {
-                startmarker = new google.maps.Marker({
-                    position: e.latLng,
-                    map: map
-                });
-                startend.push(startmarker);
+        if (markerCount == 0) {
+            startmarker = new google.maps.Marker({
+                position: e.latLng,
+                map: map,
+                draggable: true
+            });
+            startend.push(startmarker);
+            start = e.latLng;
+            ++markerCount;
+            google.maps.event.addListener(startmarker, 'dragend', function(e) {
                 start = e.latLng;
-                ++markerCount;
-            } else {
-                endmarker = new google.maps.Marker({
-                    position: e.latLng,
-                    map: map
-                });
-                startend.push(endmarker);
+                if (markerCount == 2) {
+                    findRoute();
+                }
+            });
+        }
+        else if (markerCount == 1) {
+            endmarker = new google.maps.Marker({
+                position: e.latLng,
+                map: map,
+                draggable: true
+            });
+            startend.push(endmarker);
+            end = e.latLng;
+            ++markerCount;
+            findRoute();
+            google.maps.event.addListener(endmarker, 'dragend', function(e) {
                 end = e.latLng;
-                ++markerCount;
-                findRoute();
-            }
+                if (markerCount == 2) {
+                    findRoute();
+                }
+            });
         }
     });
 
@@ -186,6 +200,9 @@ function findRoute() {
         travelMode: google.maps.TravelMode.WALKING
     };
     directionsService.route(request, function(result, status) {
+        for (var i = 0; i < directionRoutes.length; ++i) {
+            directionRoutes[i].setMap(null);
+        }
         if (status == 'OK') {
             var routes = result.routes;
             directionsDisplay.setDirections(result);
@@ -197,6 +214,7 @@ function findRoute() {
                     strokeColor: "green"
                 }
             });
+            directionRoutes.push(directionsRenderer1);
             var directionsRenderer2 = new google.maps.DirectionsRenderer({
                 directions: result,
                 routeIndex: 1,
@@ -205,6 +223,7 @@ function findRoute() {
                     strokeColor: "blue"
                 }
             });
+            directionRoutes.push(directionsRenderer2);
             var directionsRenderer3 = new google.maps.DirectionsRenderer({
                 directions: result,
                 routeIndex: 2,
@@ -213,7 +232,9 @@ function findRoute() {
                     strokeColor: "red"
                 }
             });
-        } else {
+            directionRoutes.push(directionsRenderer3);
+        }
+        else {
             alert("couldn't get directions:" + status);
         }
     });
