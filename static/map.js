@@ -254,7 +254,7 @@ function geoLocate() {
                 if (myMarker) {
                     myMarker.setMap(null);
                 }
-                myMarker = dropPin(currentLat, currentLng, fb_id, fb_name, fb_img);
+                myMarker = dropPin(currentLat, currentLng, fb_id, fb_name, fb_img, 0);
             }
         }, function() {
             handleLocationError(true);
@@ -271,13 +271,13 @@ function geoLocate() {
     }
 }
 
-function dropPin(lat, lng, id, name, img) {
+function dropPin(lat, lng, id, name, img, secondsAgo) {
     position = new google.maps.LatLng(lat, lng);
     var marker = new google.maps.Marker({
         position: position,
         map: map,
         icon: img,
-        title: name
+        title: name + " (" + secondsAgo + " seconds ago)"
     });
     google.maps.event.addListener(marker, 'click', function(event) {
         window.open("https://www.facebook.com/" + id, '_blank');
@@ -298,7 +298,8 @@ function findBuddies() {
             var id = data[i].id;
             var name = data[i].name;
             var pic = data[i].picture;
-            buddyMarkers.push(dropPin(lat, lng, id, name, pic));
+            var secondsAgo = data[i].time;
+            buddyMarkers.push(dropPin(lat, lng, id, name, pic, secondsAgo));
         }
     });
 }
