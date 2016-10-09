@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link href="/static/scrolling-nav.css" rel="stylesheet">
+<style type="text/css">
+    .center-img {
+        margin: auto;
+    }
+
+    .clear {
+        clear: both;
+    }
+</style>
+<style type="text/css">
+    .space{
+        line-height: 150%;
+        font-weight: 300;
+        font-size: 30px;
+    }
+    .bio{
+        font-weight: 300;
+        font-size: 25px;
+    }
+    .rishabh{
+        font-size: 45px;
+        font-weight: 300;
+    }
+    .divij{
+        font-size: 15px;
+        font-weight: 400;
+    }
+    .raymond{
+        font-size: 22px;
+        font-weight: 450;
+        color: #000000;
+    }
+    .danny{
+        font-size: 20px;
+        font-weight: 200;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-fixed-top top-nav-collapse" role="navigation">
+    <div class="container">
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand page-scroll" href="#page-top"><font class="raymond">Augry</font></a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                <li class="hidden">
+                    <a class="page-scroll" href="#page-top"></a>
+                </li>
+                <li class="active">
+                    <a class="page-scroll" href="#about"><font class="divij">ABOUT</font> </a>
+                </li>
+                <li class="">
+                    <a class="page-scroll" href="#team"><font class="divij">TEAM</font>
+                    </a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#contact"><font class="divij">CONTACT</font></a>
+                </li>
+            </ul>
+            <div class="visible-xs" style="padding: 10px;">
+                {% if logged_in %}
+                    <a class="btn btn-primary btn-block" href="/map">You're logged in! Enter Augry</a>
+                {% else %}
+                    <a class="btn btn-primary btn-block" href="/facebook_login">Login with Facebook</a>
+                {% endif %}
+            </div>
+            <div class="visible-sm visible-md visible-lg pull-right" style="margin-top: 10px;">
+                {% if logged_in %}
+                    <a class="btn btn-primary" href="/map">You're logged in! Enter Augry</a>
+                {% else %}
+                    <a class="btn btn-primary" href="/facebook_login">Login with Facebook</a>
+                {% endif %}
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+<!-- Intro Section -->
+<section id="intro" class="intro-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+              <img src="/static/pictures/augry.png" width="300px" height="300px"><br><h1 class="rishabh">Augry</h1>
+                <p><font class="space"><h3>Analyze. Navigate. Meet.<font color="#00e600"> All in one app.</font> </h3></font>
+                </p><br><br><br>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="about-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <font color="white"><h1 class="rishabh">About</h1></font><br><br><br><br>
+                <p><font color="white" class="space"><h3>View predictions of crime and danger in the form of heat maps, formed from real time information of incidents in Detroit. Plot multiple routes going through those regions and judge the safety of the journey, making your own choice of either the fastest or safest path. Find Facebook friends around you when you’re in a dangerous area, and buddy up with them to chat, meet and get to your destination safely.</h3></font></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Teams Section -->
+<section id="team" class="team-section">
+    <div class="container" >
+        <div class="row">
+        <h1 class="rishabh">Us.</h1>
+        <div class="visible-lg"><br><br><br><br><br></div>
+
+        <div class="col-lg-3 col-xs-6 text-center" >
+            <img class="center-img img-circle img-responsive" src="/static/pictures/danny.jpg" alt="" width="200px" height="200px">
+            <h3 class="bio">DANNY QIU
+                <small><font color="#008000">Cornell '19</font>
+                </small>
+            </h3>
+            <p><font class="danny">
+                Back-End and Social Interface
+            </font>
+            </p>
+        </div>
+        <div class="col-lg-3 col-xs-6 text-center">
+            <img class="center-img img-circle img-responsive" src="/static/pictures/divij.jpg" alt="" width="200px" height="200px">
+            <h3 class="bio">DIVIJ OHRI
+                <small><font color="#008000">UCLA '20</font></small>
+            </h3>
+            <p><font class="danny">
+                Front-End and Graphics
+            </font>
+            </p>
+        </div>
+        <div class="col-lg-3 col-xs-6 text-center">
+            <img class="center-img img-circle img-responsive" src="/static/pictures/raymond.jpg" alt="" width="200px" height="200px">
+            <h3 class="bio">RAYMOND FOK
+                <small><font color="#008000">UMich '19</font></small>
+            </h3>
+            <p><font class="danny">
+                 Mapping and Data
+            </font>
+           </p>
+        </div>
+        <div class="col-lg-3 col-xs-6 text-center">
+            <img class="center-img img-circle img-responsive" src="/static/pictures/rishabh.jpg" alt="" width="200px" height="200px">
+            <h3 class="bio">RISHABH JAIN
+                <small><font color="#008000">UCLA '20</font></small>
+            </h3>
+            <p><font class="danny">
+                Data Parsing and Design
+            </font>
+            </p>
+        </div>
+        <div class="clear"></div>
+        </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="contact-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="rishabh">Hit us up!</h1><br><br><br>
+                <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="form_name"><font class="danny">
+                Tell us your name.</font></label>
+                <input id="form_name" type="text" name="name" class="form-control" placeholder="John Smith" required="required" data-error="Name is required.">
+                <div class="help-block with-errors"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="form_name"><font class="danny">
+                Your Email Please.</font></label>
+                <input id="form_email" type="email" name="email" class="form-control" placeholder="jsmith@mhacks8.com" required="required" data-error="Valid email is required.">
+                <div class="help-block with-errors"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="form_name"><font class="danny">
+                Message for us.</font></label>
+                <textarea id="form_message" name="message" class="form-control" placeholder="I love this Website!" rows="4" required="required" data-error="Please,leave us a message."></textarea>
+                <div class="help-block with-errors"></div>
+            </div>
+        </div>
+        <div class="col-md-12">
+           <br><br><br> <input type="submit" class="btn btn-success btn-send" value="Submit Feedback" onclick="alert('We\'re sure you\'re excited about Augry, but we are only a hackathon demo. Sorry!')">
+        </div>
+    </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Scrolling Nav JavaScript -->
+<script src="/static/jquery.easing.min.js"></script>
+<script src="/static/scrolling-nav.js"></script>
+
+{% endblock %}
