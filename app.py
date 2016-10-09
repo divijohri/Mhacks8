@@ -145,7 +145,7 @@ def update_location():
 @check_logged_in('index')
 def get_friends():
     fb_friends = facebook_me_friends()
-    if fb_friends:
+    if fb_friends.has_key("friends"):
         friends_data = fb_friends["friends"]["data"]
         friend_ids = set([int(f["id"]) for f in friends_data])
         time_range = datetime.now() - timedelta(minutes=30)
