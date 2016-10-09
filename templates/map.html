@@ -3,15 +3,25 @@
 {% block head %}
 <link rel="stylesheet" type="text/css" href="/static/bootstrap-material-design.min.css">
 <style>
+html, body, #map {
+    height: 100%;
+}
+#floating-panel {
+    background-color: white;
+    padding: 20px;
+}
+#floating-panel hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 @media screen and (min-width: 768px) {
     #floating-panel {
+        z-index: 999999;
         position: absolute;
-        background-color: white;
         left: 0;
         bottom: 0;
-        width: 300px;
-        height: 200px;
-        padding: 15px;
+        width: 260px;
+        height: 230px;
     }
 }
 </style>
@@ -21,40 +31,41 @@
 <div id="floating-panel">
     <div class="togglebutton">
         <label>Crime Heatmap&nbsp;&nbsp;&nbsp;
-            <input type="checkbox" checked="" onclick="toggleHeatmap()">
+            <input type="checkbox" checked="" onclick="$('input[name=time-frame]').attr('disabled', !($(this).is(':checked'))); toggleHeatmap()">
         </label>
     </div>
     <div class="radio-inline">
         <label>
-            <input type="radio" name="time-frame" value="day" checked> Day
+            <input type="radio" name="time-frame" value="day" onclick="load100();" checked> Day
         </label>
     </div>
     <div class="radio-inline">
         <label>
-            <input type="radio" name="time-frame" value="week"> Week
+            <input type="radio" name="time-frame" value="week" onclick="load500();"> Week
         </label>
     </div>
     <div class="radio-inline">
         <label>
-            <input type="radio" name="time-frame" value="month"> Month
+            <input type="radio" name="time-frame" value="month" onclick="load1000();"> Month
         </label>
     </div>
 
     <hr>
 
+    <label style="text-decoration: underline;">Safe Spaces</label>
     <div class="togglebutton">
         <label>Police Stations&nbsp;&nbsp;&nbsp;
-            <input type="checkbox" checked="" onclick="togglePolice()">
+            <input type="checkbox" onclick="togglePolice();">
         </label>
     </div>
     <div class="togglebutton">
         <label>Libraries&nbsp;&nbsp;&nbsp;
-            <input type="checkbox" checked="" onclick="toggleLibraries()">
+            <input type="checkbox" onclick="toggleLibraries();">
         </label>
     </div>
     <div class="togglebutton">
         <label>Schools&nbsp;&nbsp;&nbsp;
-            <input type="checkbox" checked="" onclick="toggleSchools()">
+            <input type="checkbox" onclick="toggleSchools();">
         </label>
     </div>
 </div>
