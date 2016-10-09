@@ -7,7 +7,7 @@ def max_workers():
 debug = os.environ.get("DEBUGGING", 'false') == 'true'
 
 #daemon = True
-bind = "127.0.0.1:80"
+bind = "0.0.0.0:80"
 workers = max_workers()
 worker_class = "gevent"
 worker_connections = 1000

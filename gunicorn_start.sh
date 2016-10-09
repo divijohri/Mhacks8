@@ -1,5 +1,6 @@
 #!/bin/sh
 
+mkdir -p /var/log/gunicorn
 LOG_FILE=/var/log/gunicorn/augry_error.log
 PID_FILE=/var/log/gunicorn/gunicorn.pid
 
