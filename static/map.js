@@ -5,6 +5,8 @@ var policeStations = [];
 var libraries = [];
 var startend = [];
 var currentLat, currentLong;
+var myMarker;
+var buddyMarkers = [];
 
 function initMap() {
 
@@ -83,6 +85,10 @@ function initMap() {
         }
     });
 
+    if (currentLat && currentLong) {
+        dropPin(currentLat, currentLong, fb_img);
+    }
+
 } // end of initMap();
 
 function refresh() {
@@ -138,7 +144,7 @@ function placeMarker(position, map) {
     var marker = new google.maps.Marker({
         position: position,
         map: map
-    });  
+    });
 }
 
 function togglePolice() {
@@ -201,80 +207,68 @@ function findRoute() {
         }
     });
 }
-  function geoLocate() {
-    var infoWindow = new google.maps.InfoWindow({map: map});
 
-    // Try HTML5 geolocation.
+function geoLocate() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-            var pos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
+            currentLat = position.coords.latitude;
+            currentLong = position.coords.longitude;
 
-            currentLat = pos.lat;
-            currentLong = pos.lng;
+            if (currentLat && currentLong) {
+                $.post("/update_location", {"lat": currentLat, "lng": currentLong});
+            }
 
-              if (currentLat && currentLong) {
-                $.post("/update_location", {"lat": currentLat, "long": currentLong});
-              }
-
-                  // My own marker
-              position = new google.maps.LatLng(currentLat, currentLong);
-              var marker = new google.maps.Marker({
-                  position: position,
-                  map: map,
-                  icon: fb_img
-              });
-
-
-            infoWindow.setPosition(pos);
-            infoWindow.setContent('Location found.');
+            if (google) {
+                if (myMarker) {
+                    myMarker.setMap(null);
+                }
+                myMarker = dropPin(currentLat, currentLong, fb_img);
+            }
         }, function() {
-            handleLocationError(true, infoWindow, map.getCenter());
+            handleLocationError(true);
         });
     } else {
         // Browser doesn't support Geolocation
-        handleLocationError(false, infoWindow, map.getCenter());
+        handleLocationError(false);
     }
 
-    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-        infoWindow.setPosition(pos);
-        infoWindow.setContent(browserHasGeolocation ?
-                              'Error: The Geolocation service failed.' :
-                                  'Error: Your browser doesn\'t support geolocation.');
+    function handleLocationError(browserHasGeolocation) {
+        console.log(browserHasGeolocation ?
+            'Error: The Geolocation service failed.' :
+            'Error: Your browser doesn\'t support geolocation.');
     }
-  }
+}
 
-
-
-// Other buddies' markers
-function dropBuddyPin(lat, lng, img) {
+function dropPin(lat, lng, img) {
     position = new google.maps.LatLng(lat, lng);
     var marker = new google.maps.Marker({
-        position: pos,
+        position: position,
         map: map,
         icon: img
     });
+    return marker;
 }
 
 function findBuddies() {
-
     // Receive buddy data [GET id, lat, lng, time, name, picture]
-    $.get("/get_friends", function(data) {
+    $.get("/get_friends", function(json) {
+        for (var i = 0; i < buddyMarkers.length; ++i) {
+            buddyMarkers[i].setMap(null);
+        }
+        var data = jQuery.parseJSON(json);
         for (var i = 0; i < data.length; ++i) {
             var lat = data[i].lat;
             var lng = data[i].lng;
             var name = data[i].name;
             var pic = data[i].picture;
-            dropBuddyPin(lat, lng, pic);
+            buddyMarkers.push(dropPin(lat, lng, pic));
         }
     });
 }
 // Every 10 seconds, updates user location. [POST {id, lat, lng]
 function update_loc() {
-  geoLocate();
-  findBuddies();
+    geoLocate();
+    findBuddies();
 }
 
 setInterval(update_loc,10000);
