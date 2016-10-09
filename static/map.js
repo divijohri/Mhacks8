@@ -4,7 +4,7 @@ var directionsService, directionsDisplay;
 var policeStations = [];
 var libraries = [];
 var startend = [];
-var currentLat, currentLong;
+var currentLat, currentLng;
 var myMarker;
 var buddyMarkers = [];
 
@@ -85,8 +85,8 @@ function initMap() {
         }
     });
 
-    if (currentLat && currentLong) {
-        dropPin(currentLat, currentLong, fb_img);
+    if (currentLat && currentLng) {
+        dropPin(currentLat, currentLng, fb_img);
     }
 
 } // end of initMap();
@@ -212,17 +212,17 @@ function geoLocate() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             currentLat = position.coords.latitude;
-            currentLong = position.coords.longitude;
+            currentLng = position.coords.longitude;
 
-            if (currentLat && currentLong) {
-                $.post("/update_location", {"lat": currentLat, "lng": currentLong});
+            if (currentLat && currentLng) {
+                $.post("/update_location", {"lat": currentLat, "lng": currentLng});
             }
 
             if (google) {
                 if (myMarker) {
                     myMarker.setMap(null);
                 }
-                myMarker = dropPin(currentLat, currentLong, fb_img);
+                myMarker = dropPin(currentLat, currentLng, fb_img);
             }
         }, function() {
             handleLocationError(true);
@@ -265,15 +265,16 @@ function findBuddies() {
         }
     });
 }
+
 // Every 10 seconds, updates user location. [POST {id, lat, lng]
 function update_loc() {
     geoLocate();
     findBuddies();
 }
 
-setInterval(update_loc,10000);
+updateInterval = setInterval(update_loc,10000);
 
 function stop_update_loc() {
-    clearInterval();
+    clearInterval(updateInterval);
 }
 
