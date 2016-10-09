@@ -7,7 +7,7 @@ var startend = [];
 var fb_id;
 var fb_img;
 var fb_name; 
-var globlat, globlng
+var currentLat, currentLong
 
     function initMap() {
 
@@ -35,6 +35,9 @@ var globlat, globlng
               globlat: position.coords.latitude,
               globlng: position.coords.longitude
             };
+
+            currentLat = pos.globlat
+            currentLong = pos.globlng   
 
             infoWindow.setPosition(pos);
             infoWindow.setContent('Location found.');
@@ -276,7 +279,7 @@ var globlat, globlng
   }
     // Every 10 seconds, updates user location. [POST {id, lat, lng]
   function update_loc() {
-    $.post("/update_location", {fb_id, globlat, globlng});
+    $.post("/update_location", {"lat": currentLat, "long": currentLong});
   }
   
   setInterval(update_loc,10000); 

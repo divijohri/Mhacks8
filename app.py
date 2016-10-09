@@ -106,6 +106,7 @@ def update_location():
     user_id = session["facebook_id"]
     lat = request.form.get("lat")
     long = request.form.get("long")
+    print lat, long
     current_time = datetime.now()
 
     query = """
